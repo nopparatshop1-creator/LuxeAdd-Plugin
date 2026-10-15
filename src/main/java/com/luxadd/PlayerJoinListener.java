@@ -1,5 +1,6 @@
 package com.luxadd;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -21,6 +22,7 @@ public class PlayerJoinListener implements Listener {
 
         String url = config.getString("resource-pack.url", "");
         if (url.isEmpty() || url.contains("example.com")) {
+            LuxeAdd.getInstance().getLogger().warning("Resource pack URL is invalid or set to default example.com!");
             return;
         }
 
@@ -29,11 +31,16 @@ public class PlayerJoinListener implements Listener {
         
         boolean force = config.getBoolean("resource-pack.force", true);
 
-        try {
-            player.setResourcePack(url, prompt, force);
-        } catch (Exception e) {
-            LuxeAdd.getInstance().getLogger().warning("Could not send resource pack to " + player.getName() + ": " + e.getMessage());
-        }
+        // หน่วงเวลา 20 Ticks (1 วินาที) เพื่อให้แน่ใจว่า Client ของผู้เล่นพร้อมรับแพ็กเก็ต
+        Bukkit.getScheduler().runTaskLater(LuxeAdd.getInstance(), () -> {
+            if (player.isOnline()) {
+                try {
+                    player.setResourcePack(url, prompt, force);
+                } catch (Exception e) {
+                    LuxeAdd.getInstance().getLogger().warning("Could not send resource pack to " + player.getName() + ": " + e.getMessage());
+                }
+            }
+        }, 20L);
     }
 
     @EventHandler
@@ -45,7 +52,6 @@ public class PlayerJoinListener implements Listener {
 
         PlayerResourcePackStatusEvent.Status status = event.getStatus();
 
-        // ตรวจสอบเฉพาะกรณีปฏิเสธการดาวน์โหลด (DECLINED) หรือดาวน์โหลดไม่สำเร็จ (FAILED_DOWNLOAD)
         if (status == PlayerResourcePackStatusEvent.Status.DECLINED || 
             status == PlayerResourcePackStatusEvent.Status.FAILED_DOWNLOAD) {
             
