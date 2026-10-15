@@ -1,2 +1,25 @@
-# LuxeAdd Configuration
-gui-title: "&5LuxeAdd - Custom Items"
+# LuxeAdd Configuration File
+gui:
+  title: "&5LuxeAdd - Custom Items"
+
+# การตั้งค่า Resource Pack อัตโนมัติเมื่อผู้เล่นเข้าเซิร์ฟเวอร์
+resource-pack:
+  enabled: true
+  # ลิงก์ตรงสำหรับดาวน์โหลดไฟล์ Resource Pack (.zip)
+  url: "https://example.com/your-resource-pack.zip"
+  # รหัส SHA-1 Hash ของไฟล์ .zip (ใส่หรือไม่ใส่ก็ได้ แต่ใส่จะช่วยให้ Client แคชไฟล์ได้เร็วยิ่งขึ้น)
+  hash: ""
+  # ข้อความแจ้งเตือนที่ขึ้นบนหน้าจอผู้เล่นก่อนกดตกลง
+  prompt-message: "&eโปรดดาวน์โหลด Resource Pack เพื่อให้เห็นโมเดล 3D ในเซิร์ฟเวอร์!"
+  # บังคับใช้หรือไม่ (true = ถ้าปฏิเสธการโหลดจะถูกเตะออกจากเซิร์ฟเวอร์)
+  force: false
+  kick-message: "&cคุณต้องยอมรับ Resource Pack เพื่อเข้าเล่นในเซิร์ฟเวอร์นี้"
+
+items:
+  sword_3d:
+    slot: 13
+    material: PAPER
+    model-data: 10001
+    display-name: "&6Sword 3D Model"
+    lore:
+      - "&7Click to get this 3D Item"
