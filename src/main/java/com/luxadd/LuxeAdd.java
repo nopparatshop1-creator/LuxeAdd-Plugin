@@ -9,12 +9,16 @@ public class LuxeAdd extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        
         saveDefaultConfig();
         
         if (getCommand("luxeadd") != null) {
             getCommand("luxeadd").setExecutor(new LuxeCommand());
         }
+        
+        // ลงทะเบียน Event Listeners
         getServer().getPluginManager().registerEvents(new GUIListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
 
         getLogger().info("LuxeAdd Plugin enabled successfully!");
     }
