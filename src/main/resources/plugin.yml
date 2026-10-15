@@ -1,0 +1,9 @@
+name: LuxeAdd
+version: 1.0.0
+main: com.luxadd.LuxeAdd
+api-version: '1.21'
+commands:
+  luxeadd:
+    description: Open LuxeAdd GUI menu or manage custom 3D items.
+    permission: luxeadd.admin
+    usage: /luxeadd
