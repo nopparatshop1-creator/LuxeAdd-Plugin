@@ -26,7 +26,6 @@ public class LuxeCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         FileConfiguration config = LuxeAdd.getInstance().getConfig();
 
-        // คำสั่ง /luxeadd pack
         if (args.length > 0 && args[0].equalsIgnoreCase("pack")) {
             if (sender instanceof Player player) {
                 sendResourcePack(player, config);
@@ -36,7 +35,6 @@ public class LuxeCommand implements CommandExecutor {
             return true;
         }
 
-        // คำสั่ง /luxeadd reload
         if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
             if (!sender.hasPermission("luxeadd.admin")) {
                 sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
@@ -47,7 +45,6 @@ public class LuxeCommand implements CommandExecutor {
             return true;
         }
 
-        // คำสั่ง /luxeadd (เปิด GUI)
         if (sender instanceof Player player) {
             openLuxeMenu(player);
         } else {
