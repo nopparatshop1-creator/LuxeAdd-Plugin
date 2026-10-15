@@ -19,19 +19,40 @@ public class LuxeCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!sender.hasPermission("luxeadd.admin")) {
-            sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+        FileConfiguration config = LuxeAdd.getInstance().getConfig();
+
+        // คำสั่งกดดาวน์โหลด Resource Pack สดๆ
+        if (args.length > 0 && args[0].equalsIgnoreCase("pack")) {
+            if (sender instanceof Player player) {
+                String url = config.getString("resource-pack.url", "");
+                if (url.isEmpty() || url.contains("example.com")) {
+                    player.sendMessage(ChatColor.RED + "Resource pack URL is not properly configured!");
+                    return true;
+                }
+                String prompt = ChatColor.translateAlternateColorCodes('&', 
+                        config.getString("resource-pack.prompt-message", "&eDo you want to download the server resource pack?"));
+                boolean force = config.getBoolean("resource-pack.force", false);
+                
+                player.setResourcePack(url, prompt, force);
+                player.sendMessage(ChatColor.GREEN + "Sending resource pack request...");
+            } else {
+                sender.sendMessage("This command can only be used by players.");
+            }
             return true;
         }
 
-        // หากพิมพ์ /luxeadd reload
+        // คำสั่ง /luxeadd reload
         if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
+            if (!sender.hasPermission("luxeadd.admin")) {
+                sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
+                return true;
+            }
             LuxeAdd.getInstance().reloadConfig();
             sender.sendMessage(ChatColor.GREEN + "[LuxeAdd] Configuration reloaded successfully!");
             return true;
         }
 
-        // หากผู้เล่นพิมพ์ /luxeadd เฉยๆ ให้เปิด GUI
+        // คำสั่งเปิด GUI
         if (sender instanceof Player player) {
             openLuxeMenu(player);
         } else {
