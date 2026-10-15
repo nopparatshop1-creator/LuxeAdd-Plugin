@@ -1,5 +1,8 @@
 package com.luxadd;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.resource.ResourcePackInfo;
+import net.kyori.adventure.resource.ResourcePackRequest;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,8 +15,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class LuxeCommand implements CommandExecutor {
 
@@ -64,8 +69,18 @@ public class LuxeCommand implements CommandExecutor {
         boolean force = config.getBoolean("resource-pack.force", false);
 
         try {
-            // ส่งแบบระบุ Hash เป็นค่าว่าง "" เพื่อป้องกันไม่ให้ Paper นำ Prompt ไปคิดว่าเป็น Hash
-            player.setResourcePack(url, "", promptText, force);
+            ResourcePackInfo packInfo = ResourcePackInfo.resourcePackInfo()
+                    .id(UUID.randomUUID())
+                    .uri(URI.create(url))
+                    .build();
+
+            ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
+                    .packs(packInfo)
+                    .prompt(Component.text(promptText))
+                    .required(force)
+                    .build();
+
+            player.sendResourcePacks(request);
             player.sendMessage(ChatColor.GREEN + "Sending resource pack request...");
         } catch (Exception e) {
             player.sendMessage(ChatColor.RED + "Error sending resource pack: " + e.getMessage());
