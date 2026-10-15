@@ -16,7 +16,6 @@ public class LuxeAdd extends JavaPlugin {
             getCommand("luxeadd").setExecutor(new LuxeCommand());
         }
         
-        // ลงทะเบียน Event Listeners ทั้งหมด
         getServer().getPluginManager().registerEvents(new GUIListener(), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(), this);
 
