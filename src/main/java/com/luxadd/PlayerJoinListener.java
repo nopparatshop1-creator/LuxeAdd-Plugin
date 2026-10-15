@@ -22,21 +22,10 @@ public class PlayerJoinListener implements Listener {
             return;
         }
 
-        String url = config.getString("resource-pack.url", "");
-        if (url.isEmpty() || url.contains("example.com")) {
-            LuxeAdd.getInstance().getLogger().warning("Resource pack URL is invalid or set to default example.com!");
-            return;
-        }
-
-        String prompt = ChatColor.translateAlternateColorCodes('&', 
-                config.getString("resource-pack.prompt-message", "&eDo you want to download the server resource pack?"));
-        
-        boolean force = config.getBoolean("resource-pack.force", false);
-
-        // หน่วงเวลา 20 Ticks (1 วินาที) ก่อนส่งคำถามให้ผู้เล่น
+        // หน่วงเวลา 1 วินาที ให้ผู้เล่นโหลดเข้าโลกเสร็จก่อนส่งคำขอ
         Bukkit.getScheduler().runTaskLater(LuxeAdd.getInstance(), () -> {
             if (player.isOnline()) {
-                // ส่ง Title & Subtitle ถามผู้เล่น
+                // ส่ง Title & Chat prompt
                 if (config.getBoolean("resource-pack.welcome-message.enabled", true)) {
                     String title = ChatColor.translateAlternateColorCodes('&', 
                             config.getString("resource-pack.welcome-message.title", "&aResource Pack"));
@@ -44,19 +33,14 @@ public class PlayerJoinListener implements Listener {
                             config.getString("resource-pack.welcome-message.subtitle", "&fPlease accept the resource pack."));
                     player.sendTitle(title, subtitle, 10, 70, 20);
 
-                    // ส่งข้อความแจ้งเตือนทางช่องแชท
                     List<String> chatPrompt = config.getStringList("resource-pack.welcome-message.chat-prompt");
                     for (String line : chatPrompt) {
                         player.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
                     }
                 }
 
-                // แสดงกล่องป๊อปอัพถามผู้เล่นตามระบบมาตรฐานของ Minecraft
-                try {
-                    player.setResourcePack(url, prompt, force);
-                } catch (Exception e) {
-                    LuxeAdd.getInstance().getLogger().warning("Could not send resource pack to " + player.getName() + ": " + e.getMessage());
-                }
+                // ส่งคำขอ Resource Pack ผ่านเมธอดใหม่
+                LuxeCommand.sendResourcePack(player, config);
             }
         }, 20L);
     }
