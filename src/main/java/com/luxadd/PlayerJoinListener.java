@@ -30,8 +30,8 @@ public class PlayerJoinListener implements Listener {
         boolean force = config.getBoolean("resource-pack.force", true);
 
         try {
-            // ส่งหน้าต่างให้ดาวน์โหลด Resource Pack
-            player.setResourcePack(url, null, prompt, force);
+            // ใช้คำสั่ง setResourcePack แบบ 3 parameters สำหรับ Paper 1.21+
+            player.setResourcePack(url, prompt, force);
         } catch (Exception e) {
             LuxeAdd.getInstance().getLogger().warning("Could not send resource pack to " + player.getName() + ": " + e.getMessage());
         }
@@ -46,14 +46,12 @@ public class PlayerJoinListener implements Listener {
 
         PlayerResourcePackStatusEvent.Status status = event.getStatus();
 
-        // หากผู้เล่นกดปฏิเสธ (DECLINED) หรือดาวน์โหลดล้มเหลว (FAILED)
         if (status == PlayerResourcePackStatusEvent.Status.DECLINED || 
             status == PlayerResourcePackStatusEvent.Status.FAILED) {
             
             String kickMessage = ChatColor.translateAlternateColorCodes('&', 
                     config.getString("resource-pack.kick-message", "&cYou must accept the resource pack to play."));
             
-            // เตะผู้เล่นออกจากเซิร์ฟเวอร์ทันที
             event.getPlayer().kickPlayer(kickMessage);
         }
     }
