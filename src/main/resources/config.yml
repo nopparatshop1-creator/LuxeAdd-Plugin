@@ -2,17 +2,28 @@
 gui:
   title: "&5LuxeAdd - Custom Items"
 
-# ระบบบังคับดาวน์โหลด Resource Pack อัตโนมัติ
+# ระบบ Resource Pack อัตโนมัติและกล่องข้อความสอบถาม
 resource-pack:
   enabled: true
-  # ลิงก์ตรงสำหรับดาวน์โหลดไฟล์ .zip (ต้องเป็น Direct Link)
   url: "https://example.com/your-resource-pack.zip"
-  # ข้อความแจ้งเตือนที่ขึ้นบนหน้าจอผู้เล่น
-  prompt-message: "&eโปรดดาวน์โหลด Resource Pack เพื่อเข้าใช้งานเซิร์ฟเวอร์!"
-  # บังคับโหลด (true = ถ้าปฏิเสธจะโดนเตะออกจากเซิร์ฟเวอร์)
-  force: true
-  # ข้อความที่จะขึ้นเตือนเมื่อผู้เล่นกดปฏิเสธ
+  
+  # ข้อความที่จะขึ้นในป๊อปอัพคำถามมาตรฐานของ Minecraft
+  prompt-message: "&eเซิร์ฟเวอร์ต้องการให้คุณดาวน์โหลด Resource Pack โมเดล 3D\n&fคุณต้องการดาวน์โหลดเลยหรือไม่?"
+  
+  # บังคับหรือไม่ (false = ให้ผู้เล่นปฏิเสธได้โดยไม่ถูกเตะออกจากเซิร์ฟเวอร์)
+  force: false
   kick-message: "&cคุณต้องกด ยอมรับ (Accept) Resource Pack เพื่อเข้าเล่นในเซิร์ฟเวอร์นี้!"
+
+  # ระบบส่งข้อความต้อนรับถามผู้เล่นในแชท
+  welcome-message:
+    enabled: true
+    title: "&a&lRESOURCE PACK"
+    subtitle: "&fพิมพ์ &e/luxeadd pack &fเพื่อดาวน์โหลด Resource Pack โมเดล 3D"
+    chat-prompt:
+      - "&8==========================================="
+      - "&e[LuxeAdd] &fต้องการดาวน์โหลด Resource Pack ของเซิร์ฟเวอร์หรือไม่?"
+      - "&fคลิกที่นี่เพื่อดาวน์โหลด: &n&a[คลิกเพื่อดาวน์โหลด Resource Pack]"
+      - "&8==========================================="
 
 items:
   sword_3d:
