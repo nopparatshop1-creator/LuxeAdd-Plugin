@@ -1,5 +1,8 @@
 package com.luxadd;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.resource.ResourcePackRequest;
+import net.kyori.adventure.resource.ResourcePackInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -12,8 +15,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class LuxeCommand implements CommandExecutor {
 
@@ -21,32 +26,17 @@ public class LuxeCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         FileConfiguration config = LuxeAdd.getInstance().getConfig();
 
-        // คำสั่ง /luxeadd pack (สำหรับเรียกดาวน์โหลด Resource Pack)
+        // คำสั่ง /luxeadd pack
         if (args.length > 0 && args[0].equalsIgnoreCase("pack")) {
             if (sender instanceof Player player) {
-                String url = config.getString("resource-pack.url", "");
-                if (url.isEmpty() || url.contains("example.com")) {
-                    player.sendMessage(ChatColor.RED + "Resource pack URL is not properly configured!");
-                    return true;
-                }
-                
-                String prompt = ChatColor.translateAlternateColorCodes('&', 
-                        config.getString("resource-pack.prompt-message", "&eDo you want to download the server resource pack?"));
-                boolean force = config.getBoolean("resource-pack.force", false);
-                
-                try {
-                    player.setResourcePack(url, prompt, force);
-                    player.sendMessage(ChatColor.GREEN + "Sending resource pack request...");
-                } catch (Exception e) {
-                    player.sendMessage(ChatColor.RED + "Error sending resource pack: " + e.getMessage());
-                }
+                sendResourcePack(player, config);
             } else {
                 sender.sendMessage("This command can only be used by players.");
             }
             return true;
         }
 
-        // คำสั่ง /luxeadd reload (สำหรับรีโหลด config.yml)
+        // คำสั่ง /luxeadd reload
         if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
             if (!sender.hasPermission("luxeadd.admin")) {
                 sender.sendMessage(ChatColor.RED + "You do not have permission to use this command.");
@@ -65,6 +55,36 @@ public class LuxeCommand implements CommandExecutor {
         }
 
         return true;
+    }
+
+    public static void sendResourcePack(Player player, FileConfiguration config) {
+        String url = config.getString("resource-pack.url", "");
+        if (url.isEmpty() || url.contains("example.com")) {
+            player.sendMessage(ChatColor.RED + "Resource pack URL is not properly configured!");
+            return;
+        }
+
+        String promptText = config.getString("resource-pack.prompt-message", "&eDo you want to download the server resource pack?");
+        promptText = ChatColor.translateAlternateColorCodes('&', promptText);
+        boolean force = config.getBoolean("resource-pack.force", false);
+
+        try {
+            ResourcePackInfo packInfo = ResourcePackInfo.resourcePackInfo()
+                    .id(UUID.randomUUID())
+                    .uri(URI.create(url))
+                    .build();
+
+            ResourcePackRequest request = ResourcePackRequest.resourcePackRequest()
+                    .packs(packInfo)
+                    .prompt(Component.text(promptText))
+                    .required(force)
+                    .build();
+
+            player.sendResourcePacks(request);
+            player.sendMessage(ChatColor.GREEN + "Sending resource pack request...");
+        } catch (Exception e) {
+            player.sendMessage(ChatColor.RED + "Error sending resource pack: " + e.getMessage());
+        }
     }
 
     public static void openLuxeMenu(Player player) {
