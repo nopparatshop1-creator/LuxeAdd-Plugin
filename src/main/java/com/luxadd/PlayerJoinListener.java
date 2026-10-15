@@ -9,6 +9,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
+import java.util.List;
+
 public class PlayerJoinListener implements Listener {
 
     @EventHandler
@@ -27,13 +29,29 @@ public class PlayerJoinListener implements Listener {
         }
 
         String prompt = ChatColor.translateAlternateColorCodes('&', 
-                config.getString("resource-pack.prompt-message", "&ePlease accept the resource pack."));
+                config.getString("resource-pack.prompt-message", "&eDo you want to download the server resource pack?"));
         
-        boolean force = config.getBoolean("resource-pack.force", true);
+        boolean force = config.getBoolean("resource-pack.force", false);
 
-        // หน่วงเวลา 20 Ticks (1 วินาที) เพื่อให้แน่ใจว่า Client ของผู้เล่นพร้อมรับแพ็กเก็ต
+        // หน่วงเวลา 20 Ticks (1 วินาที) ก่อนส่งคำถามให้ผู้เล่น
         Bukkit.getScheduler().runTaskLater(LuxeAdd.getInstance(), () -> {
             if (player.isOnline()) {
+                // ส่ง Title & Subtitle ถามผู้เล่น
+                if (config.getBoolean("resource-pack.welcome-message.enabled", true)) {
+                    String title = ChatColor.translateAlternateColorCodes('&', 
+                            config.getString("resource-pack.welcome-message.title", "&aResource Pack"));
+                    String subtitle = ChatColor.translateAlternateColorCodes('&', 
+                            config.getString("resource-pack.welcome-message.subtitle", "&fPlease accept the resource pack."));
+                    player.sendTitle(title, subtitle, 10, 70, 20);
+
+                    // ส่งข้อความแจ้งเตือนทางช่องแชท
+                    List<String> chatPrompt = config.getStringList("resource-pack.welcome-message.chat-prompt");
+                    for (String line : chatPrompt) {
+                        player.sendMessage(ChatColor.translateAlternateColorCodes('&', line));
+                    }
+                }
+
+                // แสดงกล่องป๊อปอัพถามผู้เล่นตามระบบมาตรฐานของ Minecraft
                 try {
                     player.setResourcePack(url, prompt, force);
                 } catch (Exception e) {
@@ -46,7 +64,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onResourcePackStatus(PlayerResourcePackStatusEvent event) {
         FileConfiguration config = LuxeAdd.getInstance().getConfig();
-        boolean force = config.getBoolean("resource-pack.force", true);
+        boolean force = config.getBoolean("resource-pack.force", false);
 
         if (!force) return;
 
